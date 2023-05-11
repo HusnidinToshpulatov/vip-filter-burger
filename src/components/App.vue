@@ -1,52 +1,30 @@
 <template>
-  <!-- <router-view> -->
   <div class="output">
     <div class="sidePanel">
       <img src="./images/Logo.png" alt="" class="logo" />
-      <router-link to="/home">
-        <button
-          ref="button2"
-          class="homeButton button"
-          @click="activateButton(2)"
-          :class="{ activeSideButton: activeButtonIndex === 2 }"
-          data-route="/home"
-        >
-          <i class="bx bx-home-alt-2"></i>
-        </button>
-      </router-link>
-      <router-link to="/">
-        <button
-          ref="button1"
-          data-route="/"
-          class="dashboardButton button"
-          @click="activateButton(1)"
-          :class="{ activeSideButton: activeButtonIndex === 1 }"
+      <div class="routerOrder">
+        <router-link
+          :to="{ path: '/' }"
+          class="button"
+          :class="{ activeSideButton: $route.path === '/' }"
         >
           <i class="bx bxs-pie-chart-alt-2"></i>
-        </button>
-      </router-link>
-      <router-link to="/messages">
-        <button
-          ref="button3"
-          class="messagesButton button"
-          @click="activateButton(3)"
-          :class="{ activeSideButton: activeButtonIndex === 3 }"
-          data-route="/messages"
-        >
-          <i class="bx bx-envelope"></i>
-        </button>
-      </router-link>
-      <router-link to="/settings">
-        <button
-          ref="button4"
-          class="settingsButton button"
-          @click="activateButton(4)"
-          :class="{ activeSideButton: activeButtonIndex === 4 }"
-          data-route="/settings"
+        </router-link>
+        <router-link
+          :to="{ path: '/settings' }"
+          class="button"
+          :class="{ activeSideButton: $route.path === '/settings' }"
         >
           <i class="bx bx-cog"></i>
-        </button>
-      </router-link>
+        </router-link>
+        <router-link
+          :to="{ path: '/account' }"
+          class="button"
+          :class="{ activeSideButton: $route.path === '/account' }"
+        >
+          <i class="bx bx-user"></i>
+        </router-link>
+      </div>
     </div>
     <div>
       <div class="dashboard">
@@ -54,52 +32,49 @@
       </div>
     </div>
   </div>
-  <!-- <Settings/> -->
-  <!-- </router-view> -->
 </template>
+
 <script>
 import Dashboard from "./Dashboard/Dashboard.vue";
 import Settings from "./Settings/Settings.vue";
 import "./index.css";
 import router from "./router";
-
-// const homeButton = document.querySelector(".homeButton");
-
 export default {
   name: "App",
   components: { Dashboard, Settings },
   data() {
-    return {
-      activeButtonIndex: 1,
-    };
+    return {};
   },
-  mounted() {
-    this.setActiveButtonClass();
-  },
-
   methods: {
-    setActiveButtonClass() {
-      this.$refs.button1.classList.add("activeSideButton");
-    },
-    activateButton(buttonIndex) {
-      if (buttonIndex !== this.activeButtonIndex) {
-        const activeButton = this.$refs[`button${buttonIndex}`];
-        activeButton.classList.add("activeSideButton");
-
-        const inactiveButton = this.$refs[`button${this.activeButtonIndex}`];
-        inactiveButton.classList.remove("activeSideButton");
-
-        this.activeButtonIndex = buttonIndex;
+    activeSideButton() {
+      const routerOrder = this.$el.querySelector(".routerOrder");
+      const activeButton = routerOrder.querySelector(".activeSideButton");
+      if (activeButton) {
+        activeButton.classList.remove("activeSideButton");
+      }
+      const currentPath = this.$route.path;
+      const routerLinks = routerOrder.querySelectorAll(".button");
+      for (const routerLink of routerLinks) {
+        if (routerLink.dataset.route === currentPath) {
+          routerLink.classList.add("activeSideButton");
+        }
       }
     },
   },
+  watch: {
+    $route(to) {
+      this.activeSideButton();
+    },
+  },
+  mounted() {
+    this.activeSideButton();
+  },
 };
-
-// Sayt yangilanganda Dashboard komponentiga qaytib qoladi
 window.addEventListener("load", () => {
   router.push({ path: "/" });
 });
 </script>
+
 <style lang="scss">
 body {
   background: #252836;
@@ -110,15 +85,15 @@ body {
     height: 100vh;
     border-radius: 0px 16px 16px 0px;
     display: flex;
+    justify-content: flex-start;
     align-items: start;
     flex-direction: column;
-    justify-content: space-between;
     box-sizing: border-box;
     .logo {
       width: 7.682291666666667vw;
       height: 16.526610644257705vh;
     }
-    button {
+    .button {
       background-color: transparent;
       border: none;
       border-radius: 8px 8px;

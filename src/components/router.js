@@ -1,7 +1,6 @@
 import Dashboard from "./Dashboard/Dashboard.vue";
 import Settings from "./Settings/Settings.vue";
-import Home from "./Home/Home.vue";
-import Messages from "./Messages/Messages.vue";
+import Account from "./Account/Account.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
@@ -9,26 +8,28 @@ const routes = [
     path: "/",
     name: "Dashboard",
     component: Dashboard,
-  },
-  {
-    path: "/home",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/messages",
-    name: "Messages",
-    component: Messages,
+    key: 1,
   },
   {
     path: "/settings",
     name: "Settings",
     component: Settings,
+    key: 4,
+  },
+  {
+    path: "/account",
+    name: "Account",
+    component: Account,
+    key: 1,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: { name: "Dashboard" },
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
