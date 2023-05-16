@@ -3,7 +3,7 @@
     <div class="order d-flex" v-for="order in orders">
       <h2 class="orderName">{{ order.name }}</h2>
       <p class="orderMenu">{{ order.menu }}</p>
-      <span class="orderPrice">{{ order.price }}</span>
+      <span class="orderPrice">${{ order.price }}</span>
       <h1 class="orderStatus">{{ order.status }}</h1>
     </div>
   </div>
@@ -11,47 +11,26 @@
 <script>
 export default {
   name: "OrderReportPerson",
+  props: {
+    orders: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
-    return {
-      orders: [
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-        {
-          name: "Eren Jaegar",
-          menu: "Spicy seasoned seafood noodles ",
-          price: "$125",
-          status: "Completed",
-        },
-      ],
-    };
+    return {};
+  },
+  mounted() {
+    this.calculateTotalPrice();
+  },
+  methods: {
+    calculateTotalPrice() {
+      let totalPrice = this.orders.reduce(
+        (accumulator, currentValue) => accumulator + currentValue.price,
+        0
+      );
+      this.$emit("total-price-calculated", totalPrice);
+    },
   },
 };
 </script>

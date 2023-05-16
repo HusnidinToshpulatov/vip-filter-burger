@@ -17,10 +17,10 @@
     <div class="card">
       <div class="percentage">
         <i class="bx bx-dollar-circle imgIcon"></i>
-        <p>+32.40%</p>
+        <p>{{ 32.4 }}%</p>
         <i class="bx bx-up-arrow-alt arrows"></i>
       </div>
-      <h1>$10,243.00</h1>
+      <h1 class="totalMoney">${{ totalMoney }}</h1>
       <span>Total Revenue</span>
     </div>
     <div class="card">
@@ -29,7 +29,7 @@
         <p>-12.40%</p>
         <i class="bx bx-down-arrow-alt arrows"></i>
       </div>
-      <h1>23,456</h1>
+      <h1 class="totalOrders">{{ this.orders.length }}</h1>
       <span>Total Orders</span>
     </div>
     <div class="card">
@@ -50,10 +50,6 @@
   <div class="orderReport">
     <div class="d-flex">
       <h1 class="report">Order Report</h1>
-      <button>
-        <i class="bx bx-filter"></i>
-        Filter Order
-      </button>
     </div>
     <div class="filter d-flex">
       <span>Customer</span>
@@ -61,13 +57,14 @@
       <span>Total Payment</span>
       <span>Status</span>
     </div>
-    <OrderReportPerson />
+    <OrderReportPerson :orders="orders" />
   </div>
 </template>
 <script>
 import moment from "moment";
 import "../index.css";
 import OrderReportPerson from "../../ui-components/OrderReportPerson.vue";
+
 
 export default {
   name: "Dashboard",
@@ -77,11 +74,76 @@ export default {
       number1: 32,
       number2: -12,
       number3: 2,
+      orders: [
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+        {
+          name: "Eren Jaegar",
+          menu: "Spicy seasoned seafood noodles ",
+          price: 125,
+          status: "Completed",
+        },
+      ],
     };
   },
   computed: {
     formattedDate() {
       return moment(this.date).format("dddd D MMM, YYYY");
+    },
+    totalMoney() {
+      return this.getTotalPrice();
     },
   },
   methods: {
@@ -90,6 +152,13 @@ export default {
         positive: number >= 0,
         negative: number < 0,
       };
+    },
+    getTotalPrice() {
+      let total = 0;
+      for (let i = 0; i < this.orders.length; i++) {
+        total += this.orders[i].price;
+      }
+      return total;
     },
   },
   components: { OrderReportPerson },
@@ -191,25 +260,6 @@ export default {
         color: white;
         font-size: 3.5014005602240896vh;
         font-weight: 600;
-      }
-      button {
-        color: white;
-        padding: 1.9607843137254901vh 0.9114583333333334vw;
-        background-color: transparent;
-        border: 1px solid #393c49;
-        border-radius: 8px;
-        font-size: 1.9607843137254901vh;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: all 0.2s linear;
-        cursor: pointer;
-        i {
-          font-size: 3.5210084033613445vh;
-        }
-      }
-      button:hover {
-        background-color: #393c49;
       }
     }
     .filter {

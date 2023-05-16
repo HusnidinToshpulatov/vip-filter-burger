@@ -5,7 +5,10 @@
       <div class="productsManagement">
         <div class="d-flex rowFirst">
           <h3>Products Management</h3>
-          <button class="d-flex manageCategories">
+          <button
+            class="d-flex manageCategories"
+            @click="showManagePopup = true"
+          >
             <i class="bx bx-filter"></i>
             Manage Categories
           </button>
@@ -29,35 +32,79 @@
         </div>
       </div>
       <hr />
+
       <div class="dishes d-flex">
-        <div class="addDish card" @click="showPopup = true">
-          <span>+</span>
-          <h1>Add new dish</h1>
-        </div>
-        <div class="dishCard card" v-for="card in filteredDishes">
-          <img :src="card.img" alt="" />
-          <h2 class="title">{{ card.title }}</h2>
-          <span class="price">$ {{ card.price }}</span>
-          <button>
-            <i class="bx bx-edit-alt"></i>
-            Edit dish
-          </button>
+        <div class="placing">
+          <div class="addDish card" @click="showPopup = true">
+            <span>+</span>
+            <h1>Add new dish</h1>
+          </div>
+          <div
+            class="dishCard card"
+            v-for="(card, index) in filteredDishes"
+            :key="index"
+          >
+            <button class="deleteBtn" @click="deleteDish(index)">
+              <i class="bx bxs-trash"></i>
+            </button>
+            <img :src="card.img" alt="" />
+            <h2 class="title">{{ card.title }}</h2>
+            <span class="price">$ {{ card.price }}</span>
+            <button
+              class="button"
+              @click="
+                showEditPopup = true;
+                editingDish = card;
+                editingDishIndex = index;
+              "
+            >
+              <i class="bx bx-edit-alt"></i>
+              Edit dish
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    <Popup v-if="showPopup" @close="showPopup = false" @submit="addDish" />
+    <Popup
+      v-if="showPopup"
+      :category="getCategoryTitle(filter)"
+      :filter-buttons="filterButtons"
+      :dishes="dishes"
+      @close="showPopup = false"
+      @submit="addDish"
+    />
+    <Editpopup
+      v-if="showEditPopup"
+      :filter-buttons="filterButtons"
+      :dish="editingDish"
+      :dish-index="editingDishIndex"
+      @close="showEditPopup = false"
+      @update="updateDish"
+    />
+    <Managecategories
+      v-if="showManagePopup"
+      :filter-buttons="filterButtons"
+      @submit-changes="submitCategoryChanges"
+      @cancel-changes="cancelCategoryChanges"
+      @close="showManagePopup = false"
+    />
   </div>
 </template>
 <script>
 import burgerImg from "../images/burger.png";
 import teaImg from "../images/tea.png";
 import Popup from "./AddNewDish/Popup.vue";
-
+import Editpopup from "./EditDish/Editpopup.vue";
+import Managecategories from "./Managecategories/Managecategories.vue";
 export default {
   name: "Settings",
   data() {
     return {
+      editingDish: null,
+      editingDishIndex: null,
       showPopup: false,
+      showEditPopup: false,
+      showManagePopup: false,
       filter: "all",
       filterButtons: [
         {
@@ -69,7 +116,7 @@ export default {
           name: "tosters",
         },
         {
-          title: "Cheese Steak",
+          title: "Cheese-Steak",
           name: "cheese-steak",
         },
         {
@@ -81,7 +128,7 @@ export default {
           name: "teas",
         },
         {
-          title: "Hot Dogs",
+          title: "Hot-Dogs",
           name: "hot-dogs",
         },
         {
@@ -126,15 +173,15 @@ export default {
         {
           name: "burgers",
           img: burgerImg,
-          title: "Vip Burger",
-          price: 2.29,
+          title: "Vippp Burger",
+          price: 1.86,
           category: "burgers",
         },
         {
           name: "burgers",
           img: burgerImg,
-          title: "Vip Burger",
-          price: 2.29,
+          title: "Vip Burger 200 gramm",
+          price: 4.29,
           category: "burgers",
         },
         {
@@ -151,8 +198,25 @@ export default {
     updateFilter(category) {
       this.filter = category;
     },
-    addDish(dish) {
-      this.dishes.push(dish);
+    deleteDish(index) {
+      const dish = this.filteredDishes[index];
+      const dishIndex = this.dishes.findIndex((d) => d === dish);
+      this.dishes.splice(dishIndex, 1);
+    },
+    addDish(newDish) {
+      if (newDish) {
+        this.dishes.unshift(newDish);
+      }
+      this.dishes = this.dishes.filter((dish) => dish.title && dish.price);
+      this.showPopup = false;
+    },
+    updateDish(updatedDish, index) {
+      this.dishes.splice(index, 1, updatedDish);
+      this.showEditPopup = false;
+    },
+    getCategoryTitle(category) {
+      const button = this.filterButtons.find((btn) => btn.name === category);
+      return button ? button.title : "";
     },
   },
   computed: {
@@ -164,7 +228,8 @@ export default {
       }
     },
   },
-  components: { Popup },
+
+  components: { Popup, Editpopup, Managecategories },
 };
 </script>
 <style lang="scss" scoped>
@@ -229,7 +294,14 @@ export default {
     overflow-y: scroll;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     padding: 3.361344537815126vh 1.5625vw;
+    .placing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     .card {
       width: 14.388020833333334vw;
       height: 42.016806722689076vh;
@@ -262,6 +334,16 @@ export default {
     }
     .dishCard {
       position: relative;
+      .deleteBtn {
+        position: absolute;
+        top: 0%;
+        background-color: transparent;
+        border: none;
+        font-size: 40px;
+        cursor: pointer;
+        color: #db3315;
+        right: 0%;
+      }
       img {
         width: 9.375vw;
         height: 18.207282913165265vh;
@@ -280,7 +362,7 @@ export default {
         font-size: 2.2408963585434174vh;
         margin-bottom: 2.2408963585434174vh;
       }
-      button {
+      .button {
         display: flex;
         justify-content: center;
         align-items: center;

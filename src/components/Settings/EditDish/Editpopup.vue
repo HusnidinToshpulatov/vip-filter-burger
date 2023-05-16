@@ -1,39 +1,25 @@
 <template>
   <div class="addDishModal">
-    <h1>Add New Dish</h1>
-    <form action="addDish" @submit.prevent="submitForm">
+    <h1>Edit Dish</h1>
+    <form action="editDish" @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="imgUrl">Image URL</label>
+        <label for="title">Title</label>
         <input
           type="text"
           class="form-control"
-          id="imgUrl"
-          name="imgUrl"
-          v-model="imgUrl"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input
-          type="text"
-          class="form-control"
-          id="title"
           name="title"
-          v-model="title"
-          required
+          v-model="dish.title"
+          placeholder="Title"
         />
       </div>
       <div class="form-group">
-        <label for="price">Price</label>
+        <label for="name">Price</label>
         <input
           type="number"
           class="form-control"
-          id="price"
           name="price"
-          v-model="price"
+          v-model="dish.price"
           step="0.01"
-          required
         />
       </div>
       <div class="form-group">
@@ -42,15 +28,19 @@
           class="form-control"
           id="category"
           name="category"
-          v-model="selectedCategory"
+          v-model="dish.category"
         >
-          <option v-for="button in filterButtons" :value="button.name">
-            {{ button.title }}
+          <option
+            v-for="btn in filterButtons"
+            :key="btn.name"
+            :value="btn.name"
+          >
+            {{ btn.title }}
           </option>
         </select>
       </div>
       <div class="action">
-        <button type="submit" class="submitBtn" @click="$emit('onSubmit')">
+        <button type="submit" class="submitBtn" @click="handleSubmit">
           Submit
         </button>
         <button
@@ -67,41 +57,39 @@
 </template>
 <script>
 export default {
-  name: "Popup",
+  name: "Editpopup",
   props: {
-    defaultCategory: String,
-    filterButtons: Array,
-    dishes: Array,
+    filterButtons: {
+      type: Array,
+      required: true,
+    },
+    dish: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
-      title: "",
-      price: "",
-      selectedCategory: "",
-      img: "",
+      editedDish: null,
+      editedTitle: "",
+      editedPrice: "",
+      editedCategory: "",
     };
   },
+
   methods: {
-    submitForm() {
-      const newDish = {
-        name: this.name,
-        img: this.img, // set default image if no image is uploaded
-        title: this.title,
-        price: parseFloat(this.price),
-        category: this.selectedCategory,
-      };
-      this.$emit("submit", newDish);
+    handleSubmit() {
+      this.$emit("update", this.dish, this.dishIndex);
     },
   },
   mounted() {
-    // set default category if category prop is provided
-    if (this.defaultCategory) {
-      this.selectedCategory = this.defaultCategory;
-    }
+    this.editedDish = { ...this.dish };
+    this.editedTitle = this.dish.title;
+    this.editedPrice = this.dish.price;
+    this.editedCategory = this.dish.category;
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .addDishModal {
   padding: 8vh 10vw;
